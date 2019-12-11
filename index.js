@@ -48,7 +48,7 @@ mailListener.on("mail", function(mail, seqno, attributes) {
 
     var embed = {
         embed: {
-            color: 2551860,
+            color: 255186000,
             title: mail.subject,
             url: "",
             description: email_body,
