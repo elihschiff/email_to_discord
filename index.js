@@ -41,14 +41,19 @@ mailListener.on("mail", function(mail, seqno, attributes) {
     // console.log("emailParsed", mail);
 
     arrayOfLines = mail.text.match(/[^\r\n]+/g);
-    var start = 2 + arrayOfLines.indexOf("A new discussion thread was created in:")
+    var start = arrayOfLines.indexOf("A new discussion thread was created in:")
+    if(start == -1){
+        start = 0
+    }else{
+        start += 2
+    }
     var end = arrayOfLines.indexOf("--")
     var email_body = arrayOfLines.slice(start, end).join("\n")
 
 
     var embed = {
         embed: {
-            color: 255186000,
+            color: 2551860,
             title: mail.subject,
             url: "",
             description: email_body,
