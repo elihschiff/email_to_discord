@@ -45,33 +45,33 @@ mailListener.on("mail", function(mail, seqno, attributes) {
     // console.log("emailParsed", mail);
 
     var course_code = match_course_code.exec(mail.subject)[1];
-    if(!config.hasOwnProperty(course_code)){
+    if (!config.hasOwnProperty(course_code)) {
         client.channels.get(process.env.DEFAULT_CHANNEL).send("Unknown class: " + course_code);
         return;
     }
 
-    channel_id = config[course_code].channel_id;
+    var channel_id = config[course_code].channel_id;
 
     var message_type = match_message_type.exec(mail.subject);
-    if(message_type){
+    if (message_type) {
         message_type = message_type[1];
-    }else{
+    } else {
         message_type = "";
     }
 
 
     var title_text = "New message for " + config[course_code].name;
-    if(message_type == "New Thread"){
+    if (message_type == "New Thread") {
         title_text = "Thread posted in " + config[course_code].name;
-    }else if(message_type == "New Announcement"){
+    } else if (message_type == "New Announcement") {
         title_text = "Announcement posted in " + config[course_code].name;
-    }else if(message_type == "New Reply"){
+    } else if (message_type == "New Reply") {
         channel_id = process.env.DEFAULT_CHANNEL;
         title_text = "Reply posted in " + config[course_code].name;
     }
 
     var url = config[course_code].default_url
-    if(false){
+    if (false) {
         url = "URL FROM EMAIL";
     }
 
