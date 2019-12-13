@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+var config = require('./config.json');
+
 const Discord = require('discord.js');
 const client = new Discord.Client();
 client.login(process.env.BOT_TOKEN);
@@ -37,28 +39,52 @@ mailListener.on("error", function(err) {
     console.log(err);
 });
 
+const match_course_code = /.*?\[Submitty ([a-zA-Z]+\d+)\]:.*/;
+const match_message_type = /.*?\[Submitty [a-zA-Z]+\d+\]: (.+?):.+/;
 mailListener.on("mail", function(mail, seqno, attributes) {
     // console.log("emailParsed", mail);
 
-    arrayOfLines = mail.text.match(/[^\r\n]+/g);
-    var start = arrayOfLines.indexOf("A new discussion thread was created in:")
-    if(start == -1){
-        start = 0
-    }else{
-        start += 2
+    var course_code = match_course_code.exec(mail.subject)[1];
+    if(!config.hasOwnProperty(course_code)){
+        client.channels.get(process.env.DEFAULT_CHANNEL).send("Unknown class: " + course_code);
+        return;
     }
-    var end = arrayOfLines.indexOf("--")
-    var email_body = arrayOfLines.slice(start, end).join("\n")
 
+    channel_id = config[course_code].channel_id;
+
+    var message_type = match_message_type.exec(mail.subject);
+    if(message_type){
+        message_type = message_type[1];
+    }else{
+        message_type = "";
+    }
+
+
+    var title_text = "New message for " + config[course_code].name;
+    if(message_type == "New Thread"){
+        title_text = "Thread posted in " + config[course_code].name;
+    }else if(message_type == "New Announcement"){
+        title_text = "Announcement posted in " + config[course_code].name;
+    }else if(message_type == "New Reply"){
+        channel_id = process.env.DEFAULT_CHANNEL;
+        title_text = "Reply posted in " + config[course_code].name;
+    }
+
+    var url = config[course_code].default_url
+    if(false){
+        url = "URL FROM EMAIL";
+    }
 
     var embed = {
         embed: {
             color: 2551860,
-            title: mail.subject,
-            url: "",
-            description: email_body,
+            title: title_text,
+            url: url,
+            description: "",
             timestamp: new Date()
         }
     }
-    client.channels.get(process.env.DEFAULT_CHANNEL).send(embed = embed)
+
+
+    client.channels.get(channel_id).send(embed = embed);
 });
