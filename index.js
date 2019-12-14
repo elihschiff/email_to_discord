@@ -1,6 +1,7 @@
 require('dotenv').config();
 
-var config = require('./config.json');
+// var config = require('./config.json');
+var config = JSON.parse(process.env.CONFIG)
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
