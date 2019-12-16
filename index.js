@@ -96,6 +96,6 @@ mailListener.on("mail", function(mail, seqno, attributes) {
         setTimeout(function () {
             embed.embed.timestamp = new Date();
             client.channels.get(slow_channel_id).send(embed = embed);
-        }, 1000 * 60 * 5);
+        }, 1000 * 60 * config[course_code].speed);
     }
 });

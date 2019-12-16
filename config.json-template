@@ -3,6 +3,7 @@
         "channel_id": "577981408103104512",
         "slow_channel_id": "620030497682227213",
         "name": "Data Structures",
-        "default_url": "https://submitty.cs.rpi.edu"
+        "default_url": "https://submitty.cs.rpi.edu",
+        "speed": 0.1
     }
 }
