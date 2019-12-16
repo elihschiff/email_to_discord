@@ -45,15 +45,19 @@ const match_message_type = /.*?\[Submitty [a-zA-Z]+\d+\]: (.+?):.+/;
 mailListener.on("mail", function(mail, seqno, attributes) {
     // console.log("emailParsed", mail);
 
-    var course_code = match_course_code.exec(mail.subject)[1];
+    let course_code = match_course_code.exec(mail.subject)[1];
     if (!config.hasOwnProperty(course_code)) {
         client.channels.get(process.env.DEFAULT_CHANNEL).send("Unknown class: " + course_code);
         return;
     }
 
-    var channel_id = config[course_code].channel_id;
+    let channel_id = config[course_code].channel_id;
+    let slow_channel_id = undefined
+    if("slow_channel_id" in config[course_code]){
+        slow_channel_id = config[course_code].slow_channel_id
+    }
 
-    var message_type = match_message_type.exec(mail.subject);
+    let message_type = match_message_type.exec(mail.subject);
     if (message_type) {
         message_type = message_type[1];
     } else {
@@ -61,22 +65,23 @@ mailListener.on("mail", function(mail, seqno, attributes) {
     }
 
 
-    var title_text = "New message for " + config[course_code].name;
+    let title_text = "New message for " + config[course_code].name;
     if (message_type == "New Thread") {
         title_text = "Thread posted in " + config[course_code].name;
     } else if (message_type == "New Announcement") {
         title_text = "Announcement posted in " + config[course_code].name;
     } else if (message_type == "New Reply") {
         channel_id = process.env.DEFAULT_CHANNEL;
+        slow_channel_id = undefined
         title_text = "Reply posted in " + config[course_code].name;
     }
 
-    var url = config[course_code].default_url
+    let url = config[course_code].default_url
     if (false) {
         url = "URL FROM EMAIL";
     }
 
-    var embed = {
+    let embed = {
         embed: {
             color: 2551860,
             title: title_text,
@@ -86,6 +91,11 @@ mailListener.on("mail", function(mail, seqno, attributes) {
         }
     }
 
-
     client.channels.get(channel_id).send(embed = embed);
+    if(slow_channel_id){
+        setTimeout(function () {
+            embed.embed.timestamp = new Date();
+            client.channels.get(slow_channel_id).send(embed = embed);
+        }, 1000 * 60 * 5);
+    }
 });

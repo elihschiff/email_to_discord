@@ -1,7 +1,8 @@
 {
-    "csci1200":{
-        "channel_id":"577981408103104512",
-        "name":"Data Structures",
-        "default_url":"https://submitty.cs.rpi.edu"
+    "csci1200": {
+        "channel_id": "577981408103104512",
+        "slow_channel_id": "620030497682227213",
+        "name": "Data Structures",
+        "default_url": "https://submitty.cs.rpi.edu"
     }
 }
