@@ -42,6 +42,7 @@ mailListener.on("error", function(err) {
 
 const match_course_code = /.*?\[Submitty ([a-zA-Z]+\d+)\]:.*/;
 const match_message_type = /.*?\[Submitty [a-zA-Z]+\d+\]: (.+?):.+/;
+const match_more_info_url = RegExp('^Click here for more info: (https:\/\/.+)$','gm');
 mailListener.on("mail", function(mail, seqno, attributes) {
     // console.log("emailParsed", mail);
 
@@ -77,8 +78,9 @@ mailListener.on("mail", function(mail, seqno, attributes) {
     }
 
     let url = config[course_code].default_url
-    if (false) {
-        url = "URL FROM EMAIL";
+    let extracted_urls = mail.text.match(match_more_info_url);
+    if (extracted_urls) {
+        url = match_more_info_url.exec(extracted_urls[extracted_urls.length-1])[1];
     }
 
     let embed = {
