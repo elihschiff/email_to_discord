@@ -71,10 +71,17 @@ mailListener.on("mail", function(mail, seqno, attributes) {
         title_text = "Thread posted in " + config[course_code].name;
     } else if (message_type == "New Announcement") {
         title_text = "Announcement posted in " + config[course_code].name;
+    } else if (message_type == "Post Edited") {
+        channel_id = process.env.DEFAULT_CHANNEL;
+        slow_channel_id = undefined
+        title_text = "Post Edited in " + config[course_code].name;
     } else if (message_type == "New Reply") {
         channel_id = process.env.DEFAULT_CHANNEL;
         slow_channel_id = undefined
         title_text = "Reply posted in " + config[course_code].name;
+    }else{
+      channel_id = process.env.DEFAULT_CHANNEL;
+      slow_channel_id = undefined
     }
 
     let url = config[course_code].default_url
